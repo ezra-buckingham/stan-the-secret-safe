@@ -132,9 +132,9 @@ class Bitwarden(object):
             raise AnsibleError("Error decoding Bitwarden status: %s" % e)
         return data['status']
 
-    def get_entry(self, key, field):
-        return self._run(["get", field, key])
-
+    ### ==============================================
+    ### Helper Methods to Parse CLI
+    ### ==============================================
     def get_notes(self, key):
         data = json.loads(self.get_entry(key, 'item'))
         return data['notes']
@@ -143,6 +143,12 @@ class Bitwarden(object):
         data = json.loads(self.get_entry(key, 'item'))
         return next(x for x in data['fields'] if x['name'] == field)['value']
 
+    ### ==============================================
+    ### Methods that Interact with CLI
+    ### ==============================================
+    def get_entry(self, key, field):
+        return self._run(["get", field, key])
+    
     def get_attachments(self, key, itemid, output):
         attachment = ['get', 'attachment', '{}'.format(
             key), '--output={}'.format(output), '--itemid={}'.format(itemid)]
