@@ -1,5 +1,8 @@
 # Stan the Supervisor
 
+<img src="https://avatars.githubusercontent.com/u/15990069?s=280&v=4"/>
+<img src="https://sloopstash.com/assets/image/training/ansible/icon.svg"/>
+
 A more robust Bitwarden integration for Ansible (Forked from https://github.com/c0sco/ansible-modules-bitwarden).
 
 ## Installation
