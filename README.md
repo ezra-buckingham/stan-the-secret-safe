@@ -23,7 +23,7 @@ in your play.  For example:
 ```yaml
  - hosts: localhost
   roles:
-  - stan-the-secret-safe
+  - stan-the-supervisor
 ```
 
 Use Ansible's `lookup()` function with the `bitwarden` argument,
