@@ -1,6 +1,6 @@
 # Stan the Supervisor
 
-A more robust Bitwarden integration for Ansible.
+A more robust Bitwarden integration for Ansible (Forked from https://github.com/c0sco/ansible-modules-bitwarden).
 
 ## Installation
 
@@ -22,126 +22,50 @@ in your play.  For example:
 
 ```yaml
  - hosts: localhost
-  roles:
-  - stan-the-supervisor
+   roles:
+   - stan-the-supervisor
 ```
 
-Use Ansible's `lookup()` function with the `bitwarden` argument,
-followed by the items you want to retrieve. The default field is
-`password`, but any other field can be specified using the `field`
-named argument. If you need to specify the path to the Bitwarden CLI
-binary, use the `path` named argument.
+Use Ansible's `lookup()` function with the `bitwarden` argument, 
+followed by the `action` named argument and the action's required 
+arguments. If you need to specify the path to the Bitwarden CLI
+binary, use the `path` named argument. Additionally, if you want
+to sync the vault before running the commands, add the `sync=True`
+keyword argument.
 
-## Examples
+## Actions
 
-### Get a single password
+These are actions that have been built into `stan-the-supervisor` and if
+you see an action you would like, make a pull request.
 
-```yaml
-# Get password for Google
-- debug:
-    msg: {{ lookup('bitwarden', 'Google') }}
-```
+### create
 
-The above might result in:
+Create an item as defined in the BitWarden CLI documentation.
 
-```
-TASK [debug] *********************************************************
-ok: [localhost] => {
-    "msg": "mysecret"
-    }
-```
+Required Arguents:
+- lorem
 
-### Get a single username
+### get
 
-```yaml
-# Get username for Google
-- debug:
-    msg: {{ lookup('bitwarden', 'Google', field='username') }}
-```
+Get an item as defined in the BitWarden CLI documentation.
 
-The above might result in:
+Required Arguents:
+- lorem
 
-```
-TASK [debug] *********************************************************
-ok: [localhost] => {
-    "msg": "alice"
-    }
-```
+### delete
 
-### See all available fields
+Delete an item as defined in the BitWarden CLI documentation.
 
-```yaml
-# Get all available fields for an entry
-- debug:
-    msg: {{ lookup('bitwarden', 'Google', field='item') }}
-```
+Required Arguents:
+- lorem
 
-The above might result in:
+### generate
 
-```
-TASK [debug] *********************************************************
-ok: [localhost] => {
-    "msg": {
-        "favorite": false,
-        "fields": [
-            {
-                "name": "mycustomfield",
-                "type": 0,
-                "value": "the value of my custom field"
-            }
-        ],
-        "folderId": null,
-        "id": "12345678-0123-4321-0000-a97001342c31",
-        "login": {
-            "password": "mysecret",
-            "passwordRevisionDate": null,
-            "totp": null,
-            "username": "alice"
-        },
-        "name": "Google",
-        "notes": null,
-        "object": "item",
-        "organizationId": "87654321-1234-9876-0000-a96800ed2b47",
-        "revisionDate": "2018-10-19T19:20:17.923Z",
-        "type": 1
-    }
-}
-```
+Generate an item as defined in the BitWarden CLI documentation.
 
-### Get the value of a custom field
+Required Arguents:
+- lorem
 
-```yaml
-# Get the value of a custom field
-- debug:
-    msg: {{ lookup('bitwarden', 'Google', field='mycustomfield', custom_field=true) }}
-```
-
-The above might result in:
-
-```
-TASK [debug] *********************************************************
-ok: [localhost] => {
-    "msg": "the value of my custom field"
-    }
-```
-
-### download attachments files
-
-```yaml
-# Get the value of a custom field
-- debug:
-    msg: {{ lookup('bitwarden', 'privateKey.pem',  itemid='123456-1234-1234-abbf-60c345aaa3e', attachments=true ) }}
-```
-Optional parameters - output='/ansible/publicKey.pem'
-
-The above might result in:
-
-```
-TASK [debug] *********************************************************
-ok: [localhost] => {
-    "msg": "Saved /publicKey.pem"
-    }
-```
 
 ## Uninstallation
 
