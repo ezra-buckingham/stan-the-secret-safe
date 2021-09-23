@@ -142,3 +142,11 @@ ok: [localhost] => {
     "msg": "Saved /publicKey.pem"
     }
 ```
+
+## Uninstallation
+
+To uninstall run:
+
+```
+ansible-galaxy remove stan-the-supervisor
+```
