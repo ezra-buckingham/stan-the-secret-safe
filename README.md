@@ -1,15 +1,17 @@
-# ansible-modules-bitwarden
+# Stan the Secret Safe
 
-Bitwarden integration for Ansible.
+A more robust Bitwarden integration for Ansible.
 
 ## Installation
 
 The easiest way to install this lookup plugin is to use the
-`ansible-galaxy` command:
+`ansible-galaxy` command
 
-    ansible-galaxy install git+https://github.com/c0sco/ansible-modules-bitwarden
+```
+ansible-galaxy install git+https://github.com/ezra-buckingham/stan-the-secret-safe
+```
 
-This will place the `ansible-modules-bitwarden` role into
+This will place the `stan-the-secret-safe` role into
 `$HOME/.ansible/roles`, where it will be available to all playbooks
 you run on your system.
 
@@ -18,9 +20,11 @@ you run on your system.
 To use this plugin, you will need to activate it by including the role
 in your play.  For example:
 
-    - hosts: localhost
-      roles:
-        - ansible-modules-bitwarden
+```yaml
+ - hosts: localhost
+  roles:
+  - stan-the-secret-safe
+```
 
 Use Ansible's `lookup()` function with the `bitwarden` argument,
 followed by the items you want to retrieve. The default field is
