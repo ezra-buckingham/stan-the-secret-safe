@@ -164,15 +164,33 @@ class LookupModule(LookupBase):
             raise AnsibleError("Not logged into Bitwarden: please run "
                                "'bw login', or 'bw unlock' and set the "
                                "BW_SESSION environment variable first")
-
+       
+        # Check to see if we sync the vault
+        if kwargs.get('sync'):
+          bw.sync()
+        
+        values = []
+        
+        # Check which action was requested 
+        action = kwargs.get('action', None)
+        if (action is None):
+          raise AnsibleError("Must define an action in bitwarden lookup using /"action='<some_action>'/"")
+        elif (action == 'create'):
+          values.append('Create requested')
+        elif (action == 'generate'):
+          values.append('Generate requested')
+        elif (action == 'get'):
+          values.append('Get requested')
+        elif (action == 'edit'):
+          values.append('Edit requested')
+        elif (action == 'delete'):
+          values.append('Delete requested')
+        else:
+          raise AnsibleError("Must use a defined command to interact with bitwarden. Please see the stan-the-supervisor docs for more info.")
+          
+        
         field = kwargs.get('field', 'password')
         test = kwargs.get('test', None)
-        values = []
-
-        if kwargs.get('sync'):
-            bw.sync()
-        if kwargs.get('session'):
-            bw.session = kwargs.get('session')
 
         for term in terms:
             if kwargs.get('custom_field'):
