@@ -166,6 +166,7 @@ class LookupModule(LookupBase):
                                "BW_SESSION environment variable first")
 
         field = kwargs.get('field', 'password')
+        test = kwargs.get('test', None)
         values = []
 
         if kwargs.get('sync'):
@@ -176,6 +177,8 @@ class LookupModule(LookupBase):
         for term in terms:
             if kwargs.get('custom_field'):
                 values.append(bw.get_custom_field(term, field))
+            elif test is not None:
+                values.append('You reached me in the script')
             elif field == 'notes':
                 values.append(bw.get_notes(term))
             elif kwargs.get('attachments'):
