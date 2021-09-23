@@ -1,8 +1,10 @@
 # Stan the Supervisor
 
-<img align="center" height ="250" width="250" src="https://avatars.githubusercontent.com/u/15990069?s=280&v=4"/>
-<img align="center" height ="250" width="250" src="https://logos-download.com/wp-content/uploads/2016/10/Ansible_logo-700x700.png"/>
-
+<p align="center">
+<img height ="250" width="250" src="https://avatars.githubusercontent.com/u/15990069?s=280&v=4"/>
+<img height ="250" width="250" src="https://logos-download.com/wp-content/uploads/2016/10/Ansible_logo-700x700.png"/>
+</p>
+ 
 A more robust Bitwarden integration for Ansible (Forked from https://github.com/c0sco/ansible-modules-bitwarden).
 
 ## Installation
