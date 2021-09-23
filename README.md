@@ -1,4 +1,4 @@
-# Stan the Secret Safe
+# Stan the Supervisor
 
 A more robust Bitwarden integration for Ansible.
 
@@ -8,10 +8,10 @@ The easiest way to install this lookup plugin is to use the
 `ansible-galaxy` command
 
 ```
-ansible-galaxy install git+https://github.com/ezra-buckingham/stan-the-secret-safe
+ansible-galaxy install git+https://github.com/ezra-buckingham/stan-the-supervisor
 ```
 
-This will place the `stan-the-secret-safe` role into
+This will place the `stan-the-supervisor` role into
 `$HOME/.ansible/roles`, where it will be available to all playbooks
 you run on your system.
 
