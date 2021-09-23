@@ -14,6 +14,8 @@ import json
 import os
 import sys
 
+from base64 import b64encode
+
 from subprocess import Popen, PIPE, STDOUT, check_output
 
 from ansible.errors import AnsibleError
@@ -62,7 +64,6 @@ RETURN = """
     description:
       - Items from Bitwarden vault
 """
-
 
 class Bitwarden(object):
     def __init__(self, path):
@@ -120,6 +121,9 @@ class Bitwarden(object):
             else:
                 raise AnsibleError("Unknown failure in 'bw' command: "
                                    "{0}".format(out))
+        elif out.startswith("(node:"):
+            raise AnsibleError("Syntax failure in 'bw' command: "
+                                   "{0}".format(out))
         return out.strip()
 
     def sync(self):
@@ -133,7 +137,7 @@ class Bitwarden(object):
         return data['status']
 
     ### ==============================================
-    ### Helper Methods to Parse CLI
+    ### Helper Methods
     ### ==============================================
     def get_notes(self, key):
         data = json.loads(self.get_entry(key, 'item'))
@@ -143,16 +147,57 @@ class Bitwarden(object):
         data = json.loads(self.get_entry(key, 'item'))
         return next(x for x in data['fields'] if x['name'] == field)['value']
 
+    def encode_item(self, item):
+        item_bytes = item.encode('ascii')
+        return b64encode(item_bytes)
+
     ### ==============================================
     ### Methods that Interact with CLI
     ### ==============================================
-    def get_entry(self, key, field):
+    def get_bw_template(self, item_type):
+        command = ['get', 'template', item_type]
+        return self._run(command)
+
+    def create_folder(self, folder_name):
+        folder = json.dumps({ 'name': folder_name })
+        command = ['create', 'folder', self.encode_item(folder)]
+        return self._run(command)
+    
+    def create_login_item_entry(self, name, username, password, note='', uris=[]):
+        item = json.dumps({
+            "organizationId": None,
+            "collectionIds": None,
+            "folderId": None,
+            "type": 1,
+            "name": name,
+            "notes": "Some notes about this item.",
+            "favorite": False,
+            "fields": [],
+            "login": {
+                "uris": uris,
+                "username": username,
+                "password": password,
+                "totp": ""
+            },
+            "secureNote": None,
+            "card": None,
+            "identity": None,
+            "reprompt": 0
+        })
+        command = ['create', 'item', self.encode_item(item)]
+        self._run(command)
+
+    def get_entry(self, key, field='item'):
         return self._run(["get", field, key])
     
     def get_attachments(self, key, itemid, output):
         attachment = ['get', 'attachment', '{}'.format(
             key), '--output={}'.format(output), '--itemid={}'.format(itemid)]
         return self._run(attachment)
+
+    def delete_item(self, item_id):
+        command = ['delete', 'item', item_id]
+        return self._run(command)
 
 
 class LookupModule(LookupBase):
@@ -174,7 +219,7 @@ class LookupModule(LookupBase):
         # Check which action was requested 
         action = kwargs.get('action', None)
         if (action is None):
-          raise AnsibleError("Must define an action in bitwarden lookup using /"action='<some_action>'/"")
+          raise AnsibleError("Must define an action in bitwarden lookup using ""action='<some_action>'/""")
         elif (action == 'create'):
           values.append('Create requested')
         elif (action == 'generate'):
@@ -189,27 +234,27 @@ class LookupModule(LookupBase):
           raise AnsibleError("Must use a defined command to interact with bitwarden. Please see the stan-the-supervisor docs for more info.")
           
         
-        field = kwargs.get('field', 'password')
-        test = kwargs.get('test', None)
+        # field = kwargs.get('field', 'password')
+        # test = kwargs.get('test', None)
 
-        for term in terms:
-            if kwargs.get('custom_field'):
-                values.append(bw.get_custom_field(term, field))
-            elif test is not None:
-                values.append('You reached me in the script')
-            elif field == 'notes':
-                values.append(bw.get_notes(term))
-            elif kwargs.get('attachments'):
-                if kwargs.get('itemid'):
-                    itemid = kwargs.get('itemid')
-                    output = kwargs.get('output', term)
-                    values.append(bw.get_attachments(term, itemid, output))
-                else:
-                    raise AnsibleError("Missing value for - itemid - "
-                                       "Please set parameters as example: - "
-                                       "itemid='f12345-d343-4bd0-abbf-4532222' ")
-            else:
-                values.append(bw.get_entry(term, field))
+        # for term in terms:
+        #     if kwargs.get('custom_field'):
+        #         values.append(bw.get_custom_field(term, field))
+        #     elif test is not None:
+        #         values.append('You reached me in the script')
+        #     elif field == 'notes':
+        #         values.append(bw.get_notes(term))
+        #     elif kwargs.get('attachments'):
+        #         if kwargs.get('itemid'):
+        #             itemid = kwargs.get('itemid')
+        #             output = kwargs.get('output', term)
+        #             values.append(bw.get_attachments(term, itemid, output))
+        #         else:
+        #             raise AnsibleError("Missing value for - itemid - "
+        #                                "Please set parameters as example: - "
+        #                                "itemid='f12345-d343-4bd0-abbf-4532222' ")
+        #     else:
+        #         values.append(bw.get_entry(term, field))
         return values
 
 
